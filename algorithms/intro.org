@@ -1,0 +1,65 @@
+#+title: Intro to Algorithms
+#+description: Learn them algos
+
+
+** What is an Algorithm?
+- a word that means, plainly, good instructions
+- example of an algo that finds the smallest number in the list:
+  + set ~min~ to positive infinity: ~float("inf")~
+  + for each num in the list ~nums~, compare it to ~min~; if ~num~ is smaller, set ~min~ to ~num~
+  + ~min~ is now the smallest number in the list
+- in python:
+#+BEGIN_SRC python
+    def find_min(nums):
+        min = float("inf")
+        for num in nums:
+            if num < min:
+                min = num
+        return min
+#+END_SRC
+
+- an algorithm is:
+  + defined: there are specific sequence of steps that performs a task
+  + unambiguous: there is a correct and incorrect interpretation of the steps
+  + implementable: it can be implemented in code or using hardware
+- sum of an array algo
+  + set ~sum~ equal to 0
+  + iter over the list ~nums~ and add each to the ~sum~ total
+  + return the value of ~sum~
+#+BEGIN_SRC python
+    def sum(nums):
+        sum = 0
+        for num in nums:
+            sum += num
+        return sum
+#+END_SRC
+
+- return the average of a given list
+  + set ~sum~ equal to 0
+  + iter over the list ~nums~ and add each to the ~sum~ total
+  + take the value of ~sum~ and divide by the len of the list
+  + return ~average~
+#+BEGIN_SRC python
+    def average(nums):
+        sum = 0
+        for num in nums:
+            sum += num
+        average = sum // len(nums)
+        return average
+#+END_SRC
+
+- return the median of a list
+  + set ~median~ =0
+  + sort the value of the list
+  + iter over the list ~nums~ and take the middle value
+    - if there are two numbers, divide them by 2 and take that total as the median
+    - if there is one number use that as the median
+  + return ~median~
+#+BEGIN_SRC python
+    def median(nums):
+        nums = sorted(nums)
+        n = len(nums)
+        if n % 2 == 0:
+            return (nums[n // 2 - 1] + nums[n // 2]) / 2
+        return nums[n // 2]
+#+END_SRC

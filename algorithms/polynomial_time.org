@@ -1,0 +1,422 @@
+#+title: Polynomial Time
+
+** Big O
+- characterization of algorithims according to their worst-case growth-rates
+- written like ~O(formula)~
+  + where formula describes the growth rate of the input size, ~n~
+    - ~O(n)~, linear
+    - ~O(n^2)~, squared
+    - ~O(2^n)~, exponential
+    - ~O(n!)~, factorial
+
+** O(n)
+ - any algo that has its number of steps grow at the same rate as its input size is classified as ~O(n)~
+ #+BEGIN_SRC python
+# runtime complexity of O(n) b/c as the list increases so to does the steps of the algo
+def find_max(nums):
+    max = float("-inf")
+    for n in nums:
+        if n > max:
+            max = n
+    return n
+
+
+# don't touch below this line
+
+
+def test(nums):
+    res = find_max(nums)
+    print(f"- nums: {nums}")
+    print(f"Max: {res}")
+    print("====================================")
+
+
+def main():
+    test([7, 4, 3, 100, 2343243, 343434, 1, 2, 32])
+    test([12, 12, 12])
+    test([10, 200, 3000, 5000, 4])
+
+
+main()
+ #+END_SRC
+
+** O(n^2)
+ - *reasonably* quick, in terms of security and cryptography "n squared" is fast
+ - common sign of ~O(n^2)~ is a nested loop
+ #+BEGIN_SRC python
+def does_name_exist(first_names, last_names, full_name):
+    for i in first_names:
+        for j in last_names:
+            potential_name = i + " " + j
+            if potential_name == full_name:
+                return True
+    return False
+
+
+# don't touch below this line
+
+
+def test(first_names, last_names, full_name):
+    res = does_name_exist(first_names, last_names, full_name)
+    print(f"- num first_names: {len(first_names)}")
+    print(f"- num last_names: {len(last_names)}")
+    print(f"- full_name: {full_name}")
+    print(f"Name exists: {res}")
+    print("====================================")
+
+
+def main():
+    test(get_first_names(100), get_last_names(100), "bob0 gonzalez0")
+    test(get_first_names(500), get_last_names(500), "bob0 smith1")
+    test(get_first_names(1000), get_last_names(1000), "bob500 smith6")
+    test(get_first_names(2000), get_last_names(2000), "bob1999 wagner1998")
+    test(get_first_names(3000), get_last_names(3000), "sally2999 smith2998")
+
+
+def get_first_names(num):
+    names = []
+    for i in range(num):
+        m = i % 3
+        if m == 0:
+            names.append(f"bob{i}")
+        elif m == 1:
+            names.append(f"maria{i}")
+        if m == 2:
+            names.append(f"sally{i}")
+    return names
+
+
+def get_last_names(num):
+    names = []
+    for i in range(num):
+        m = i % 3
+        if m == 0:
+            names.append(f"gonzalez{i}")
+        elif m == 1:
+            names.append(f"smith{i}")
+        if m == 2:
+            names.append(f"wagner{i}")
+    return names
+
+
+main()
+
+ #+END_SRC
+
+** O(nm)
+- very similar to ~O(n^2)~, the difference is that instead of a single input that we care about
+  there are 2 inputs
+- if ~n~ and ~m~ increase at the same rate, then ~O(nm)~ is effectively the same as ~O(n^2)~
+#+BEGIN_SRC python
+"""
+Socialytics needs a new tool that allows big brands to see how many of an influencer's followers are loyal to their brand.
+Complete the get_avg_brand_followers function. It takes two inputs:
+
+    all_handles: a 2-dimensional list, or "list of lists" of strings representing instagram user handles on a per-influencer basis.
+    brand_name: a string.
+
+get_avg_brand_followers returns the average number of handles that contain the brand_name across all the lists. Each list represents the audience of a single influencer.
+"""
+import random
+
+
+def get_avg_brand_followers(all_handles, brand_name):
+    count = 0
+    for handles in all_handles:
+        for handle in handles:
+            if brand_name in handle:
+                count += 1
+    return count / len(all_handles)
+
+
+# don't touch below this line
+
+
+def test(num_handles, avg_aud_size, brand_name):
+    print(
+        f"Checking {num_handles} influencers with average audience sizes of {avg_aud_size}..."
+    )
+    all_handles = get_all_handles(num_handles, avg_aud_size)
+    avg = round(get_avg_brand_followers(all_handles, brand_name), 2)
+    print(f"Average {brand_name} fans per influencer: {avg}")
+    print("====================================")
+
+
+def main():
+    random.seed(1)
+    test(10, 1000, "luxa")
+    test(20, 2000, "luxa")
+    test(40, 4000, "luxa")
+    test(80, 8000, "luxa")
+    test(160, 16000, "luxa")
+
+
+def get_all_handles(num, audience_size):
+    all_handles = []
+    for i in range(num):
+        m = random.randrange(
+            int(audience_size - audience_size * 1.2),
+            int(audience_size + audience_size * 1.2),
+        )
+        handles = get_instagram_handles(m)
+        all_handles.append(handles)
+    return all_handles
+
+
+def get_instagram_handles(num):
+    handles = []
+    for i in range(0, num):
+        m = random.randrange(0, 6)
+        if m == 0:
+            handles.append(f"luxaraygirl{i}")
+        elif m == 1:
+            handles.append(f"theprimerog{i}")
+        elif m == 2:
+            handles.append(f"luxafanboi{i}")
+        elif m == 3:
+            handles.append(f"dashlord{i}")
+        elif m == 4:
+            handles.append(f"saintrex{i}")
+        elif m == 5:
+            handles.append(f"writergurl{i}")
+    return handles
+
+
+main()
+#+END_SRC
+
+** Constants dont matter
+- big0 only describes the theoritical growth rate of algos, not the actual runtime
+- For example, take a look at the following functions:
+
+#+BEGIN_SRC python
+def print_names_once(names):
+    for name in names:
+        print(name)
+
+def print_names_twice(names):
+    for name in names:
+        print(name)
+    for name in names:
+        print(name)
+#+END_SRC
+
+- As you would expect, print_names_once will take half the time to run as print_names_twice. The funny thing about Big O analysis is that WE DON'T CARE.
+- Both functions have the same rate of growth, O(n). You might be tempted to say, "print_names_twice should be O(2 * n)" but you would be missing the whole point of Big O.
+- In Big O analysis we drop all constants because they don't affect the change in the runtime, just the runtime itself.
+
+** O(1)
+- means that no matter the size of the input the algo will take constant (no-growth) time
+- in python, dictionaries look up items by key, an operation that is independent of the size of the
+  dictionary, ~O(1)~
+
+#+BEGIN_SRC python
+"""
+Assignment
+
+We need to be able to search our Socialytics user base more quickly! Our users are complaining that the search bar is painfully slow.
+You'll notice that if you run the code in its current state, it will take a very long time.
+
+The find_last_name function takes "names_dict", a dictionary of first_name -> last_name. It also accepts a first_name.
+If first_name is a key in the dictionary, find_last_name returns the associated last name. If the key is not found, it returns None.
+Make sure you handle the case where the first_name is not in the dictionary!
+
+Write the function so that it runs quickly! It should be O(1).
+"""
+import time
+
+
+def find_last_name(names_dict, first_name):
+    if first_name in names_dict:
+        return names_dict[first_name]
+    return None
+
+
+
+# don't touch below this line
+
+
+def benchmark(names_dict, first_name):
+    start = time.time()
+    test(names_dict, first_name)
+    end = time.time()
+
+    timeout = 0.05
+
+    if (end - start) < timeout:
+        print(f"find_last_name completed in less than {timeout * 1000} milliseconds!")
+    else:
+        print(
+            f"find_last_name took too long ({(end - start) * 1000} milliseconds). Speed it up!"
+        )
+    print("====================================")
+
+
+def test(names_dict, first_name):
+    res = find_last_name(names_dict, first_name)
+    print(f"- first_name: {first_name}")
+    print(f"Last name: {res}")
+    print("------------------------------------")
+
+
+def main():
+    complexity = 2000000
+    names_dict = get_name_dict(complexity)
+    benchmark(names_dict, "bree1999999")
+    benchmark(names_dict, "Allan")
+
+
+def get_name_dict(num):
+    names = {}
+    for i in range(num):
+        names[f"bree{i}"] = f"fuca{i}"
+    return names
+
+
+main()
+#+END_SRC
+
+** Order Log N
+- ~O(log(n))~ algos are only slightly slower that ~O(1)~, they grow according to input size, but only according to the log of the input
+*** Binary Search
+- common example of order log n, work on sorted list of elements
+- The algorithm is as follows:
+  + Given an array of n elements sorted from least to greatest, and a target value:
+    - Set low=0 and high=n-1.
+    - While low <= high:
+      + Set median (the position of the middle element) to (low+high)/2, which is the greatest integer less than or equal to (low+high)/2
+      + If array[median] < target, set low to median+1
+      + Otherwise set high to median-1
+    - If (low != n) AND (array[low] == target), return true; the target was found, otherwise return False
+- Because at each iteration of the search we are halving the size of the search space, the algorithm has a complexity of log2, or O(log(n)).
+- In other words, in order to add another step to the runtime, we need to double the size of the input. Binary searches are fast.
+#+BEGIN_SRC python
+import time
+
+
+def binary_search(target, arr):
+    n = len(arr)
+    low = 0
+    high = n - 1
+
+    while low <= high:
+        median = ( low + high ) // 2
+        if arr[median] < target:
+            low = median + 1
+        high = median - 1
+
+    if low != n and arr[low] == target:
+        return True
+    return False
+
+
+
+# don't touch below this line
+
+
+def benchmark(names_dict, first_name):
+    start = time.time()
+    test(names_dict, first_name)
+    end = time.time()
+
+    timeout = 0.05
+
+    if (end - start) < timeout:
+        print(f"test completed in less than {timeout * 1000} milliseconds!")
+    else:
+        print(f"test took too long ({(end - start) * 1000} milliseconds). Speed it up!")
+    print("====================================")
+
+
+def test(target, arr):
+    res = binary_search(target, arr)
+    print(f"- len arr: {len(arr)}")
+    print(f"- target: {target}")
+    print(f"Result: {res}")
+    print("------------------------------------")
+
+
+def main():
+    complexity = 2000000
+    nums = get_nums(complexity)
+    benchmark(int(complexity * 0.2344), nums)
+    benchmark(int(complexity * 2), nums)
+    benchmark(int(complexity + 1), nums)
+    benchmark(int(complexity * 0.765), nums)
+
+
+def get_nums(num):
+    nums = []
+    for i in range(num):
+        nums.append(i)
+    return nums
+
+
+main()
+#+END_SRC
+** Challenges
+#+BEGIN_SRC python
+"""
+Name Count
+
+In Socialytics, we process tons of user's names. They are often structured as lists of lists. For example, a separate list of users for each influencer's followers.
+
+Assignment:
+Complete the count_names function.
+It should iterate over all the names in the nested list_of_lists and count all the instances of target_name, then return the count.
+
+Observe:
+What's the time complexity of your solution? It should be O(n) on the total number of names, but O(mn) if you consider m to be the number of lists and n to be the average length of a list.
+"""
+def count_names(list_of_lists, target_name):
+    count = 0
+    for list in list_of_lists:
+        for name in list:
+            if target_name in name:
+                count += 1
+    return count
+
+
+
+# don't touch below this line
+
+
+def test(list_of_lists, target_name):
+    result = count_names(list_of_lists, target_name)
+    print(f"Number of input lists: {len(list_of_lists)}")
+    print(f"Instances of {target_name}: {result}")
+    print("====================================")
+
+
+def main():
+    test(
+        [
+            ["George", "Eva", "George"],
+            ["Diane", "George", "Eva", "Frank"],
+        ],
+        "George",
+    )
+    test(
+        [
+            ["Amy", "Bob", "Candy"],
+            ["Diane", "George", "Eva", "Frank"],
+            ["Diane", "George"],
+            ["George", "name", "George"],
+        ],
+        "George",
+    )
+    test(
+        [
+            ["Alex", "name", "Chloe"],
+            ["Eric", "name", "Fred"],
+            ["Hector", "name"],
+            ["Hector", "name"],
+            ["Hector", "name"],
+            ["George"],
+        ],
+        "Hector",
+    )
+
+
+main()
+#+END_SRC

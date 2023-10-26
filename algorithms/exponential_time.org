@@ -1,0 +1,184 @@
+#+title: Exponential Time
+
+** Polynomial v Exponential
+- polynomial time describes any algorithm with a run time that doesnt increase faster that ~n^k~
+  + where ~k~ is any constant and ~n~ is the size of the input
+
+***  Polynomial Time
+ - ~O(1), O(n), O(n*log(n)), O(n^2), O(n^3)~
+ - scale well, they are fast enough to be generally useful
+ - small changes to the size of the input do not typically induce enormous changes to the overall runtime
+*** Exponential Time
+- ~O(2^n), O(n^n), O(n!) [technically factorial time]~
+- exponential functions scale terribly
+- small changes to the size of the input huge changes in the overall runtime
+
+** Polynomial Time = P
+- ~P~ is a complexity class taht refers to all algos, that fall into the "polynomial" category
+
+** Upper Bound
+- thought of as a sloppy guess that is no less than the exact answer
+- if an algo is described as ~O(n)~ it also has an upper bound of ~O(n^2)~
+
+** Order 2 ^N -> Exponential
+- ~O(2^n)~ is the first BigO class that we've dealt with that falls into the scary ecponential category of algorithms
+- algos that grow at an exponential rate become impossible to compute after a few iterations that they are almost worthless
+  in practicality
+#+BEGIN_SRC python
+"""
+Assignment:
+At Socialytics we need to be able to compute the power set of a set of influencers. Something about targeting segments of an audience with ads. I don't know, I just do what I'm told.
+A power set is the set of all possible subsets of a set. For example, the set {1, 2, 3} has the power set:
+
+{{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}}.
+
+We'll work with lists instead of sets for simplicity.
+Complete the power_set function using the following algorithm:
+
+    Check if the input list is empty. If it is, return a list containing an empty list. (The power set of an empty set is a set containing just the empty set)
+    Otherwise, create an empty list to hold all the final subsets of the input list.
+    Recursively call power_set. Pass in all of the elements in the input set except the first one.
+    Iterate over the list of subsets returned from the recursive call. For each subset, append two new subsets to the final list of subsets:
+        first_item_from_input_set + subset
+        subset
+    Return the list of subsets
+
+Observe:
+Notice how the power_set() function gets exponentially slower with each iteration, this is because its complexity class is O(2^n)
+You couldn't complete power_set() with an input of just 22 items on modern hardware, even if you had a million years!
+"""
+
+def power_set(input_set):
+    if not input_set:
+        return [[]]
+
+    final_subset_list = [[]]
+    first_item = input_set[0]
+
+    rest_of_set = power_set(input_set[1:])
+
+    for subset in rest_of_set:
+        final_subset_list.append([first_item] + subset)
+        final_subset_list.append(subset)
+    return final_subset_list
+
+def test(input_set):
+    result = power_set(input_set)
+    print(f"Number of subsets of {input_set}: {len(result)}")
+    print("====================================")
+
+
+def main():
+    for i in range(1, 22):
+        nums = list(range(1, i))
+        test(nums)
+
+
+main()
+
+#+END_SRC
+** Big O Categories Review
+| Big-O      | Name           | Description                                                                                                                                                                                  |
+|------------+----------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| O(1)       | constant       | Best The algorithm always takes the same amount of time, regardless of how much data there is. Example: Looking up an item in a list by index                                                |
+| O(log n)   | logarithmic    | Great Algorithms that remove a percentage of the total steps with each iteration. Very fast, even with large amounts of data. Example: Binary search                                         |
+| O(n)       | linear         | Good 100 items, 100 units of work. 200 items, 200 units of work. This is usually the case for a single, non-nested loop. Example: unsorted array search.                                     |
+| O(n log n) | "linearithmic" | Okay This is slightly worse than linear, but not too bad. Example: mergesort and other "fast" sorting algorithms.                                                                            |
+| O(n^2)     | quadratic      | Slow The amount of work is the square of the input size. 10 inputs, 100 units of work. 100 Inputs, 10,000 units of work. Example: A nested for loop to find all the ordered pairs in a list. |
+| O(n^3)     | cubic          | Slower If you have 100 items, this does 100^3 = 1,000,000 units of work. Example: A doubly nested for loop to find all the ordered triples in a list.                                        |
+| O(2^n)     | exponential    | Horrible We want to avoid this kind of algorithm at all costs. Adding one to the input doubles the amount of steps. Example: Brute-force guessing results of a sequence of n coin flips.     |
+| O(n!)      | factorial      | Even More Horrible The algorithm becomes so slow so fast, that is practically unusable. Example: Generating all the permutations of a list                                                   |
+
+** Challenges
+- Exponential Growth Sequences
+#+BEGIN_SRC python
+"""
+Assignment
+Complete the exponential_growth function. Given the initial followers count n, growth factor factor, and number of days days, return a list containing the exponential growth of followers for each day, up to and including the target day.
+
+For example:
+- Initial followers: 10
+- Growth factor: 2
+- Days: 4
+
+Growth sequence: [10, 20, 40, 80, 160]
+"""
+def exponential_growth(n, factor, days):
+    growth_list = [n]
+
+    for i in range(1, day + 1):
+        growth_list.append(growth_list[-1] * factor)
+        return growth_list
+
+
+# don't touch below this line
+
+
+def test(n, factor, days):
+    growth_sequence = exponential_growth(n, factor, days)
+    print(f"- Initial followers: {n}")
+    print(f"- Growth factor: {factor}")
+    print(f"- Days: {days}")
+    print(f"Growth sequence: {growth_sequence}")
+    print("=====================================")
+
+
+def main():
+    test(10, 2, 4)
+    test(20, 2, 6)
+    test(30, 3, 3)
+    test(40, 10, 10)
+
+
+main()
+#+END_SRC
+
+- Travel Time Limit
+#+BEGIN_SRC python
+"""
+Assignment
+Write a function num_countries_in_days that takes a maximum amount of days max_days and the time increase factor factor, then returns the number of countries an influencer can visit within that time limit.
+
+For example:
+
+- Max days: 2
+- Time factor: 1.2
+Countries visited: 1
+=====================================
+- Max days: 3
+- Time factor: 1.2
+Countries visited: 2
+"""
+def num_countries_in_days(max_days, factor):
+    time_left = max_days
+    count = 0
+    time_in_country = 1
+
+    while time_left >= time_in_country:
+       time_left -= time_in_country
+       time_in_country *= factor
+       count += 1
+    return count
+
+# don't touch below this line
+
+
+def test(max_days, factor):
+    countries_visited = num_countries_in_days(max_days, factor)
+    print(f"- Max days: {max_days}")
+    print(f"- Time factor: {factor}")
+    print(f"Countries visited: {countries_visited}")
+    print("=====================================")
+
+
+def main():
+    test(2, 1.2)
+    test(3, 1.2)
+    test(10, 1.2)
+    test(100, 1.2)
+    test(200, 1.2)
+    test(1000, 1.3)
+
+
+main()
+#+END_SRC

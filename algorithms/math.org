@@ -1,0 +1,48 @@
+#+title: Math for Algos/Python
+
+** Math in Python
+- exponents:
+  #+BEGIN_SRC python
+    square = 2 ** 2
+    cube = 2 ** 3
+
+    # or
+
+    square = 2^2
+    cube = 2^3
+  #+END_SRC
+
+- logarithms
+  - inverse of exponents
+  - 2^4 = 16
+  - log2(16) = 4
+    + means, the number of times 2 must be multiplied by itself to equal 16
+  #+BEGIN_SRC python
+    import math
+
+        print(f"Log base 2 of 16 is: {math.log(16,2)}")
+  #+END_SRC
+
+- factorials
+  - the product of all positive integers less than and equal to ~n~, written as ~n!~
+  #+BEGIN_SRC shell
+    5! = 5 * 4 * 3 * 2 * 1
+  #+END_SRC
+  - the growth is greater than exponential
+  - ordering problems have factorial growth
+    + for example, how many different ways can a deck of cards by arranged?
+      - the first card could be any of 52
+      - the second card could be any of 51
+      - the third card could be any of 50
+      - in other words, ~52!~
+  #+BEGIN_SRC python
+    # Solve functionally
+    import functools
+
+    # pure functions
+    def mul(x, y):
+        return x * y
+
+    def factorial(n):
+        return functools.reduce(mul, range(1, n +1)) if n else 1
+  #+END_SRC

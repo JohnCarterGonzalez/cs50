@@ -1,0 +1,111 @@
+#+title: Sorting Algos
+
+** Bubble Sort
+- repeatedly steps through a slice and compares adjacent elements, swapping them if they are out of order
+- continues to loop over a slice until the whole list is completely sorted
+- an algorithmic description:
+    Procedural bubble_sort(arr):
+        set swapping to True
+        while swapping is True:
+            set swapping to False
+            for i from the 2nd element to the last element:
+                if the (i-1) element is greater than the ith element:
+                    swap the (i-1) element with the ith element
+                    set swap to True
+        return arr
+#+BEGIN_SRC python
+def bubble_sort(arr):
+    swap = True
+
+    while swap: # while swap is True
+        for i in range(1, len(arr)):
+            if arr[i-1] > arr[i]:
+                arr[i-1], arr[i] = arr[i], arr[i-1]
+                swap = True
+    return arr
+#+END_SRC
+** Merge Sort
+- Merge sort is a recursive sorting algorithm and its quite a bit faster than bubble sort.
+*** Divide and Conquer
++ Merge sort is a divide and conquer algorithm.:
+    - Divide: divide the large problem into smaller problems, and recursively solve the smaller problems
+    - Conquer: Combine the results of the smaller problems to solve the large problem
+In merge sort specifically we:
+**** Divide
+- Divide the array into two (equal) halves
+- Recursively sort the two halves
+**** Conquer
+- Merge the two halves to form a sorted array
+*** Algorithm
++ The algorithm consists of two separate functions, merge_sort and merge.
+    - merge_sort() divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves.
+        + The merge() function is used for merging two sorted lists back into a single sorted list. At the lowest level of recursion, the two "sorted" lists will each have a length of 1. Those single element lists will be merged into a sorted list of length two, and we can build from there.
+**** merge_sort() implementation
+- Input: nums, a list of integers
+    + If the length of nums is less than 2, it's already sorted so return it
+    + Split the input array into two halves down the middle
+    + Call merge_sort() twice, once on each half
+    + Call merge(left_arr, right_arr) on the results of the merge_sort() calls
+**** merge() implementation
+- Inputs: A, B. Two lists of integers
+    + Create a new "result" list of integers.
+    + Set left and right equal to zero. They will be used to keep track of indexes in the input lists (left_arr and right_arr).
+    + Use a loop to iterate over left_arr and right_arr at the same time. If an element in left_arr is less than or equal to its respective element in right_arr, add it to the result list and increment left. Otherwise, add the item in right_arr to the result list and increment right.
+    + After comparing all the items, there may be some items left over in either left_arr or result_arr (if one of the lists is longer than the other). Add those extra items to the result list.
+    + Return the result list.
+#+BEGIN_SRC python
+def merge_sort(nums):
+    if len(nums) <= 1:
+        return nums
+
+    mid = len(nums) // 2
+
+    left_arr = merge_sort(nums[mid:])
+    right_arr = merge_sort(nums[:mid])
+
+    return merge(left_arr, right_arr)
+
+def merge(left_arr, right_arr):
+    result = []
+    left = 0
+    right = 0
+
+    while left < len(left_arr) and right < len(right_arr):
+        if left_arr[left] < right_arr[right]:
+            result.append(left_arr[left])
+            left += 1
+        else:
+            result.append(right_arr[right])
+            right += 1
+    result.extend(right_arr[right:])
+    result.extend(left_arr[left:])
+    return result
+
+#+END_SRC
+
+*** Why use merge_sort()?
+- merge is much faster that bubble sort, being ~O(n*log(n))~
+- stable: which means that values with duplicate keys in the original list will be in the same order in the sorted list
+- extra memory: most sorting algorithms can be performed using a single copy of the original list. Merge Sort requires an extra list
+  in memory to merge the sorted subarrays
+- recursive: merge sort requires many recursive function calls, and function calls can have significant resource overhead
+** Insertion Sort
+- builds a final sorted list one item at a time, much less efficient on large lists than more advanced algorithms like quick sort
+*** Algorithm
+- for each index in the input list:
+  + set a ~j~ variable to the current index
+  + while j is greater than ~0~ and the element at index ~j-1~ is greater than the element at index ~j~:
+    - swap the elements at indices ~j~ and ~j-1~
+    - decrement ~j~ by ~1~
+- return the list
+#+BEGIN_SRC python
+def insert_sort(nums):
+
+    for index in range(len(nums)):
+        j = index
+        while num[j] > 0 and num[j-1] > num[j]:
+            num[j], num[j-1] = num[j-1], num[j]
+            j -= 1
+    return nums
+
+#+END_SRC

@@ -1,0 +1,238 @@
+#+title: Sorting Algos
+
+** Bubble Sort
+- repeatedly steps through a slice and compares adjacent elements, swapping them if they are out of order
+- continues to loop over a slice until the whole list is completely sorted
+- an algorithmic description:
+    Procedural bubble_sort(arr):
+        set swapping to True
+        while swapping is True:
+            set swapping to False
+            for i from the 2nd element to the last element:
+                if the (i-1) element is greater than the ith element:
+                    swap the (i-1) element with the ith element
+                    set swap to True
+        return arr
+#+BEGIN_SRC python
+def bubble_sort(arr):
+    swap = True
+
+    while swap: # while swap is True
+        for i in range(1, len(arr)):
+            if arr[i-1] > arr[i]:
+                arr[i-1], arr[i] = arr[i], arr[i-1]
+                swap = True
+    return arr
+#+END_SRC
+** Merge Sort
+- Merge sort is a recursive sorting algorithm and its quite a bit faster than bubble sort.
+*** Divide and Conquer
++ Merge sort is a divide and conquer algorithm.:
+    - Divide: divide the large problem into smaller problems, and recursively solve the smaller problems
+    - Conquer: Combine the results of the smaller problems to solve the large problem
+In merge sort specifically we:
+**** Divide
+- Divide the array into two (equal) halves
+- Recursively sort the two halves
+**** Conquer
+- Merge the two halves to form a sorted array
+*** Algorithm
++ The algorithm consists of two separate functions, merge_sort and merge.
+    - merge_sort() divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves.
+        + The merge() function is used for merging two sorted lists back into a single sorted list. At the lowest level of recursion, the two "sorted" lists will each have a length of 1. Those single element lists will be merged into a sorted list of length two, and we can build from there.
+**** merge_sort() implementation
+- Input: nums, a list of integers
+    + If the length of nums is less than 2, it's already sorted so return it
+    + Split the input array into two halves down the middle
+    + Call merge_sort() twice, once on each half
+    + Call merge(left_arr, right_arr) on the results of the merge_sort() calls
+**** merge() implementation
+- Inputs: A, B. Two lists of integers
+    + Create a new "result" list of integers.
+    + Set left and right equal to zero. They will be used to keep track of indexes in the input lists (left_arr and right_arr).
+    + Use a loop to iterate over left_arr and right_arr at the same time. If an element in left_arr is less than or equal to its respective element in right_arr, add it to the result list and increment left. Otherwise, add the item in right_arr to the result list and increment right.
+    + After comparing all the items, there may be some items left over in either left_arr or result_arr (if one of the lists is longer than the other). Add those extra items to the result list.
+    + Return the result list.
+#+BEGIN_SRC python
+def merge_sort(nums):
+    if len(nums) <= 1:
+        return nums
+
+    mid = len(nums) // 2
+
+    left_arr = merge_sort(nums[mid:])
+    right_arr = merge_sort(nums[:mid])
+
+    return merge(left_arr, right_arr)
+
+def merge(left_arr, right_arr):
+    result = []
+    left = 0
+    right = 0
+
+    while left < len(left_arr) and right < len(right_arr):
+        if left_arr[left] < right_arr[right]:
+            result.append(left_arr[left])
+            left += 1
+        else:
+            result.append(right_arr[right])
+            right += 1
+    result.extend(right_arr[right:])
+    result.extend(left_arr[left:])
+    return result
+
+#+END_SRC
+
+*** Why use merge_sort()?
+- merge is much faster that bubble sort, being ~O(n*log(n))~
+- stable: which means that values with duplicate keys in the original list will be in the same order in the sorted list
+- extra memory: most sorting algorithms can be performed using a single copy of the original list. Merge Sort requires an extra list
+  in memory to merge the sorted subarrays
+- recursive: merge sort requires many recursive function calls, and function calls can have significant resource overhead
+** Insertion Sort
+- builds a final sorted list one item at a time, much less efficient on large lists than more advanced algorithms like quick sort
+*** Algorithm
+- for each index in the input list:
+  + set a ~j~ variable to the current index
+  + while j is greater than ~0~ and the element at index ~j-1~ is greater than the element at index ~j~:
+    - swap the elements at indices ~j~ and ~j-1~
+    - decrement ~j~ by ~1~
+- return the list
+#+BEGIN_SRC python
+def insert_sort(nums):
+    for index in range(len(nums)):
+        j = index
+        while j > 0 and nums[j-1] > nums[j]:
+            nums[j], nums[j-1] = nums[j-1], nums[j]
+            j -= 1
+    return nums
+#+END_SRC
+- insertion sort has a BigO complexity of ~O(n^2)~, b/c that is the worst case scenario
+- the outer loop executes ~n~ times, while the inner loop depends on the input
+- in the worst case ( a reverse sorted array ) the inner loop executes ~n~ times as well
+- in the best case ( an already sorted array ) the inner loop immediately breaks with a
+  time complexity of ~O(n)~
+*** Why use Insertion Sort?
+- simple implementation, easy to write
+- fast for very small data sets
+  + there is no recursion overhead
+  + tiny memory
+  + its a stable sort as described above
+- faster than other simple sorting algos like bubble sort
+- adaptive, faster for partially sorted arrays
+- stable: does not change the relative order of elements with equal keys
+- in-place: only requires a constant amount of money
+- online: can sort a list as it receives it
+
+** Quick Sort
+- an efficient sorting algo that's widely used in production sorting implementations
+- a divide and conquer algorithm
+*** Divide
+- select a pivot element that will preferably end up close to the center of the sorted pack
+- move everything onto the "greater than" or "less than" side of the pivot
+- the pivot is now in it final position
+- recursively repeat the operation on both sides of the pivot
+*** Conquer
+- return a sorted array after all elements have been through the pivot operation
+*** Visual
+- NOTE: the process is started with ~quick_sort(A, 0, len(A)-1)~
+**** quick_sort(nums, low, high)
+- if ~low~ is less than ~high~:
+  + partition the input list using the ~partition~ function
+  + recursively call ~quick_sort~ on the left side of the partition
+  + recursively call ~quick_sort~ on the right side of the partition
+- return the ~nums~
+**** partition(nums, low, high)
+- set ~pivot~ to the element at index ~high~
+- set ~i~ to ~low~
+- for each index ~j~ from ~low~ to ~high~
+  + if the element at index ~j~ is less than the ~pivot~
+   - swap the element at index ~i~ with the element at index ~j~
+   - increment ~i~ by ~1~
+- swap the element at index ~i~ with the element at index ~high~
+- return the list and the index ~i~
+#+BEGIN_SRC python
+def quick_sort(nums, low, high):
+    if low < high:
+        nums, pivot = partition(nums, low, high)
+        quick_sort(nums, low, pivot - 1)
+        quick_sort(nums, pivot + 1, high)
+
+def partition(nums, low, high):
+    pivot = nums[high]
+    i = low
+    for j in range(low, high):
+        if nums[j] < pivot:
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+    nums[i], nums[high] = nums[high], nums[i]
+    return nums, i
+#+END_SRC
+*** Implementation
+- quick sort has a bigO of ~O(n*log(n))~
+- ~partition()~ ahs a single for-loop that ranges from the lowest index to the highest index in the array
+- the ~partition()~ is ~O(n)~
+  + the overall complexity of the quicksort is dependant on how many times ~partition()~ is called
+- in the worst case, the input is already sorted
+  + an already sorted array results in the pivot being the largest or smallest element in the partition each time
+  + when this is the case ~partition()~ is called a total of ~n~
+- in the best case, the pivot is the middle element of each sublist which results i ~log(n)~ calls to ~partition()~
+*** Fixing Quick Sort Big O
+- since the worst implementation is ~O(n^2)~ technically the bigO is ~O(n^2)~, this can be fixed with two approaches:
+  + shuffle the input randomly before sorting, this can trivially be done in ~O(n)~ time
+    - easy to code
+    - works practically all the time
+    - often used
+    - quickly shuffle the list before sorting it
+    - the likelihood of shuffling into a sorted list is astronomically unlikely, and is also more unlikely the larger the input
+  + actively find the median of a sample of data from the partition, this can be done in ~O(1)~ time
+    - "median of three", approach
+    - three elements( the first, middle, and last elements ) of each partition are chosen and the median is found between them
+      + that item is then used as the pivot
+    - has the advantage that it cant break down to ~O(n^2)~ time because we are guaranteed to never use the worst item in the partition as the pivot
+    - can be slower because a true median isnt used
+*** Why use Quick Sort?
+- pros:
+  + very fast in the average case
+  + in-place: saves on memory, doesnt need to do a lot of copying and allocating
+- cons:
+  + more complex implementation
+  + typically unstable: changes the relative order of elements with equal keys
+** Selection Sort
+- similar to bubble sort in that it works by repeatedly swapping items in a list
+- it's slightly more efficient than bubble sort because it only makes one swap per iteration
+*** Implementation
+- for each index:
+  + set ~smallest_index~ to the current index
+  + for each index from ~smallest_index + 1~ to the end of the list:
+    - if the number at the inner index is smaller than the number at ~smallest_index~, set ~smallest_index~ to
+      the inner index
+  + swap the number at the current index with the number at ~smallest_index~
+#+BEGIN_SRC python
+def selection_sort(nums):
+    n = len(nums)
+    for i in range(n):
+        smallest_index = i
+        for j in range(i + 1, n):
+            if nums[j] < nums[smallest_index]:
+                smallest_index = j
+        nums[i], nums[smallest_index] = nums[smallest_index], nums[i]
+    return nums
+#+END_SRC
+** Binary Search
+- A Binary Search is a fast ~O(log(n))~ lookup that only works on pre-sorted lists.
+- It works by repeatedly dividing the list in half until the target value is found.
+#+BEGIN_SRC python
+def binary_search(arr, target):
+    left, right = 0, len(nums) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return arr[mid]
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return None
+#+END_SRC
