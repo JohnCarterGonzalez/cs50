@@ -1,0 +1,90 @@
+#+title: Polynomial v Non-Determinstic Polynomial
+
+** Non-Deterministic Polynomial
+- ~NP~ (which stands for nondeterministic polynomial time) is the set of problems whose solutions can be verified in polynomial time, but not necessarily solved in polynomial time.
+    + For a more precise definition of NP, take a look [[https://en.wikipedia.org/wiki/NP_(complexity)][here]].
+    + P is in NP
+        - Because all problems that can be solved in polynomial time can also be verified in polynomial time, all the problems in P are also in NP
+
+- A thought experiment
+    + The Oracle
+        - A good way of thinking about problems in NP is to imagine that we have a magic oracle that gives us potential solutions to problems. Here would be our process for finding if a problem is in NP:
+            Present the problem to the magic oracle
+            The magic oracle gives us a potential solution
+            We verify in polynomial time that the solution is correct
+    + If we are able to do the verification in polynomial time, the problem is in NP, otherwise, it isn't.
+
+- Traveling Salesman Problem
+    + A famous example of a problem in NP is the Traveling Salesman Problem, also known as TSP.
+    + The version of the problem that we will solve can be stated:
+        - Given a list of cities, the distances between each pair of cities, and a total distance, is there a path through all the cities that is less than the distance given?
+- TSP
+  #+BEGIN_SRC python
+import random
+
+
+def tsp(cities, paths, dist):
+    return False
+
+
+# don't touch below this line
+
+
+def test(num_cities, dist):
+    paths = []
+    cities = []
+    for i in range(num_cities):
+        path = []
+        for j in range(num_cities):
+            if i == j:
+                path.append(0)
+            elif j < i:
+                path.append(paths[j][i])
+            else:
+                path.append(random.randint(0, 999))
+        paths.append(path)
+        cities.append(i)
+    path_exists = tsp(cities, paths, dist)
+    print("Paths:")
+    print_matrix(paths)
+    print("------------------------------------")
+    print(f"Path shorter than {dist} miles exists: {path_exists}")
+    print("====================================")
+
+
+def main():
+    random.seed(0)
+    for num_cities in range(2, 10):
+        dist = random.randint(0, 3999)
+        test(num_cities, dist)
+
+
+def permutations(arr):
+    res = []
+    res = helper(res, arr, len(arr))
+    return res
+
+
+def helper(res, arr, n):
+    if n == 1:
+        tmp = arr.copy()
+        res.append(tmp)
+    else:
+        for i in range(n):
+            res = helper(res, arr, n - 1)
+            if n % 2 == 1:
+                arr[n - 1], arr[i] = arr[i], arr[n - 1]
+            else:
+                arr[0], arr[n - 1] = arr[n - 1], arr[0]
+    return res
+
+
+def print_matrix(mat):
+    n = len(mat)
+    m = len(mat[0])
+    for i in range(n):
+        print(mat[i])
+
+
+main()
+  #+END_SRC

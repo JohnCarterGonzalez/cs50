@@ -40,7 +40,6 @@ Complete the power_set function using the following algorithm:
     Recursively call power_set. Pass in all of the elements in the input set except the first one.
     Iterate over the list of subsets returned from the recursive call. For each subset, append two new subsets to the final list of subsets:
         first_item_from_input_set + subset
-        subset
     Return the list of subsets
 
 Observe:
@@ -94,7 +93,7 @@ main()
 #+BEGIN_SRC python
 """
 Assignment
-Complete the exponential_growth function. Given the initial followers count n, growth factor factor, and number of days days, return a list containing the exponential growth of followers for each day, up to and including the target day.
+Complete the exponential_growth function. Given the initial followers count n, growth factor, and number of days days, return a list containing the exponential growth of followers for each day, up to and including the target day.
 
 For example:
 - Initial followers: 10
